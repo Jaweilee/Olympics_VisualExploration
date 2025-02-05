@@ -1,0 +1,214 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "data": {
+    "name": "OlympicsData",
+    "url": "https://raw.githubusercontent.com/Jaweilee/Information_Visualization/refs/heads/master/updated_olympics_aggregated.csv",
+    "format": {"type": "csv"}
+  },
+  "background": "#A7D3E0",
+  "padding": 30,
+  "title": {
+    "text": "Olympics Medal Explorer",
+    "anchor": "middle",
+    "fontSize": 50,
+    "offset": 20,
+    "font": "Olympic Sans"
+  },
+  "transform": [
+    {
+      "fold": ["Bronze Medal", "Silver Medal", "Gold Medal"],
+      "as": ["Medal", "Total Medals"]
+    }
+  ],
+  "hconcat": [
+    {
+      "vconcat": [
+        {
+          "data": {
+            "url": "https://raw.githubusercontent.com/Jaweilee/Information_Visualization/refs/heads/master/countries-110m.json",
+            "format": {"type": "topojson", "feature": "countries"}
+          },
+          "transform": [
+            {
+              "lookup": "id",
+              "from": {
+                "data": {"name": "OlympicsData"},
+                "key": "numeric",
+                "fields": [
+                  "countrycode",
+                  "numeric",
+                  "country",
+                  "Bronze Medal",
+                  "Silver Medal",
+                  "Gold Medal"
+                ]
+              }
+            },
+            {
+              "fold": ["Bronze Medal", "Silver Medal", "Gold Medal"],
+              "as": ["Medal", "Total Medals"]
+            }
+          ],
+          "params": [
+            {
+              "name": "country_selection",
+              "select": {
+                "type": "point",
+                "toggle": false,
+                "fields": ["country"]
+              }
+            }
+          ],
+          "width": 900,
+          "height": 700,
+          "projection": {"type": "equalEarth"},
+          "mark": {
+            "type": "geoshape",
+            "stroke": "black",
+            "color": "forestgreen"
+          },
+          "encoding": {
+            "fillOpacity": {
+              "condition": {"param": "country_selection", "value": 1},
+              "value": 0.1
+            },
+            "tooltip": [
+              {"field": "country", "type": "nominal", "title": "Country"}
+            ]
+          }
+        },
+        {
+          "mark": {"type": "bar"},
+          "width": 850,
+          "height": 100,
+          "transform": [
+            {"filter": {"param": "sport_selection"}},
+            {"filter": {"param": "country_selection"}},
+            {"filter": {"param": "legend_selection"}}
+          ],
+          "params": [
+            {
+              "name": "year_selection",
+              "select": {
+                "type": "interval",
+                "fields": ["year"],
+                "encodings": ["x"]
+              }
+            },
+            {
+              "name": "legend_selection",
+              "select": {"type": "point", "fields": ["Medal"]},
+              "bind": "legend"
+            }
+          ],
+          "encoding": {
+            "x": {
+              "field": "year",
+              "type": "nominal",
+              "title": "Olympic Year",
+              "axis": {
+                "titleFontSize": 20,
+                "labelFontSize": 16,
+                "labelAngle": 0,
+                "labelPadding": 3,
+                "titlePadding": 6
+              }
+            },
+            "y": {
+              "field": "Total Medals",
+              "title": "Total Medals won",
+              "aggregate": "sum",
+              "axis": {"titleFontSize": 15}
+            },
+            "color": {
+              "field": "Medal",
+              "type": "nominal",
+              "scale": {
+                "domain": ["Bronze Medal", "Silver Medal", "Gold Medal"],
+                "range": ["#CD7F32", "#C0C0C0", "Gold"]
+              }
+            },
+            "order": {
+              "scale": {
+                "domain": ["Bronze Medal", "Silver Medal", "Gold Medal"]
+              }
+            },
+            "opacity": {
+              "condition": {"param": "year_selection", "value": 1},
+              "value": 0.3
+            }
+          }
+        }
+      ]
+    },
+    {
+      "width": 200,
+      "height": 850,
+      "params": [
+        {
+          "name": "sport_selection",
+          "select": {
+            "type": "point",
+            "fields": ["sport"],
+            "toggle": false,
+            "encodings": ["y"]
+          }
+        }
+      ],
+      "transform": [
+        {"filter": {"param": "year_selection"}},
+        {"filter": {"param": "country_selection"}},
+        {"filter": {"param": "legend_selection"}}
+      ],
+      "mark": "bar",
+      "encoding": {
+        "y": {
+          "field": "sport",
+          "type": "nominal",
+          "sort": "-x",
+          "title": null,
+          "axis": {
+            "labelFontSize": 16,
+            "labelAlign": "right",
+            "labelFont": "Frutiger"
+          }
+        },
+        "color": {
+          "field": "Medal",
+          "type": "ordinal",
+          "scale": {
+            "domain": ["Bronze Medal", "Silver Medal", "Gold Medal"],
+            "range": ["#CD7F32", "#C0C0C0", "Gold"]
+          }
+        },
+        "order": {
+          "scale": {"domain": ["Bronze Medal", "Silver Medal", "Gold Medal"]}
+        },
+        "x": {
+          "field": "Total Medals",
+          "title": "Total Medals won",
+          "axis": {
+            "titleFontSize": 18,
+            "titlePadding": 10,
+            "labelFontWeight": "bold",
+            "labelFontSize": 12
+          },
+          "aggregate": "sum"
+        },
+        "opacity": {
+          "condition": {"param": "sport_selection", "value": 1},
+          "value": 0.3
+        }
+      }
+    }
+  ],
+  "config": {
+    "legend": {
+      "orient": "top-left",
+      "labelFontSize": 18,
+      "titleFontSize": 20,
+      "labelFont": "Georgia",
+      "titlePadding": 5
+    }
+  }
+}
