@@ -2,7 +2,7 @@
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
   "data": {
     "name": "OlympicsData",
-    "url": "https://raw.githubusercontent.com/Jaweilee/Information_Visualization/refs/heads/master/updated_olympics_aggregated.csv",
+    "url": "https://raw.githubusercontent.com/Jaweilee/Information_Visualization/refs/heads/master/updated_olympics_aggregation.csv",
     "format": {"type": "csv"}
   },
   "background": "#A7D3E0",
