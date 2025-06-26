@@ -5,7 +5,7 @@
     "url": "https://raw.githubusercontent.com/Jaweilee/Information_Visualization/refs/heads/master/updated_olympics_aggregation.csv",
     "format": {"type": "csv"}
   },
-  "background": "#A7D3E0",
+  "background": "#ffffff",
   "padding": 30,
   "title": {
     "text": "Olympics Medal Explorer",
